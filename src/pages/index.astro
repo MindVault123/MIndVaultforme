@@ -1,0 +1,75 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import linksData from '../data/links.json';
+
+const libraryEntries = await getCollection('library');
+const topVideos = libraryEntries.sort((a, b) => a.data.featuredOrder - b.data.featuredOrder).slice(0, 3);
+const sortedLinks = linksData.sort((a, b) => a.priority - b.priority);
+---
+<BaseLayout>
+  <!-- HIGHLIGHT BANNER -->
+  <div class="mb-6 relative group cursor-pointer" onclick="document.getElementById('links-section').scrollIntoView({behavior: 'smooth'})">
+    <div class="absolute -inset-0.5 bg-[#FFB000] rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+    <div class="relative bg-slate-900 border-2 border-[#FFB000] rounded-xl p-4 text-center">
+      <h2 class="text-[#FFB000] font-black text-lg sm:text-xl tracking-tight uppercase">ALL MY RECOMMENDED LINKS ARE HERE</h2>
+      <p class="text-slate-300 text-sm mt-1">Tools, books and picks I actually use. Tap any to open.</p>
+      <div class="mt-2 animate-bounce">
+        <svg class="w-5 h-5 text-[#FFB000] mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- LINKS SECTION -->
+  <section id="links-section" class="mb-12 space-y-3">
+    {sortedLinks.map((link) => (
+      <a 
+        href={link.url} 
+        target="_blank" 
+        rel={link.isAffiliate ? "sponsored nofollow noopener" : "noopener noreferrer"}
+        class="block bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-xl p-4 transition group flex items-center justify-between"
+      >
+        <div class="flex-grow pr-4">
+          <div class="flex items-center gap-2 mb-1">
+            <h3 class="font-bold text-white text-base leading-tight">{link.title}</h3>
+            {link.badge && (
+              <span class="bg-[#FFB000]/20 text-[#FFB000] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider whitespace-nowrap">{link.badge}</span>
+            )}
+          </div>
+          <p class="text-slate-400 text-sm line-clamp-1">{link.description}</p>
+        </div>
+        <svg class="w-5 h-5 text-slate-500 group-hover:text-white flex-shrink-0 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+      </a>
+    ))}
+    <p class="text-center text-xs text-slate-500 pt-2">
+      Some links are affiliate links. I may earn a commission at no extra cost to you.
+    </p>
+  </section>
+
+  <!-- DEEPER DIVES -->
+  <div class="h-px w-full bg-gradient-to-r from-transparent via-slate-700 to-transparent my-8"></div>
+  
+  <section>
+    <div class="flex justify-between items-end mb-6">
+      <h2 class="text-xl font-bold text-white uppercase tracking-wider">DEEPER DIVES: <span class="text-slate-400 font-normal">My Most Viewed Videos</span></h2>
+      <a href="/library" class="text-sm text-[#FFB000] hover:underline">View All</a>
+    </div>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      {topVideos.map((video) => (
+        <div class="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden flex flex-col">
+          <div class="p-5 flex-grow">
+            <h3 class="font-bold text-lg text-white mb-2 leading-tight">{video.data.title}</h3>
+            <p class="text-slate-400 text-sm mb-4">{video.data.description}</p>
+          </div>
+          <div class="p-4 border-t border-slate-700/50 bg-slate-800/30 flex gap-2">
+            <a href={`/library/${video.slug}`} class="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-center text-sm font-medium py-2 rounded transition">Read the deep dive</a>
+            <a href={`https://youtube.com/watch?v=${video.data.videoId}`} target="_blank" rel="noopener" class="flex-none bg-red-600/10 text-red-500 hover:bg-red-600 hover:text-white p-2 rounded transition flex items-center justify-center" aria-label="Watch Video">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

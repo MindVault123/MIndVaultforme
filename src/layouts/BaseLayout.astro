@@ -1,0 +1,96 @@
+---
+import { SITE_TITLE, SITE_DESCRIPTION, ADS_ENABLED, ANALYTICS_ENABLED } from '../config';
+
+interface Props {
+  title?: string;
+  description?: string;
+  type?: 'website' | 'article';
+}
+
+const { title = SITE_TITLE, description = SITE_DESCRIPTION, type = 'website' } = Astro.props;
+// Use localhost fallback for dev mode
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'http://localhost:4321');
+---
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+    <meta name="title" content={title} />
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content={type} />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+
+    {ADS_ENABLED && (
+      <script type="text/javascript" is:inline>
+        /* INFOLINKS SCRIPT GOES HERE AFTER APPROVAL */
+      </script>
+    )}
+
+    {ANALYTICS_ENABLED && (
+      <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "placeholder"}' is:inline></script>
+    )}
+  </head>
+  <body class="bg-[#0f172a] text-slate-100 font-sans min-h-screen flex flex-col antialiased">
+    <!-- Slim Header -->
+    <header class="sticky top-0 z-50 bg-[#0f172a]/90 backdrop-blur border-b border-slate-800">
+      <div class="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
+        <a href="/" class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          MindVault
+        </a>
+        <button id="menu-btn" aria-label="Menu" class="p-2 text-slate-300 hover:text-white">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+      </div>
+      <!-- Mobile Nav (Hidden by default) -->
+      <nav id="mobile-nav" class="hidden absolute top-14 left-0 w-full bg-[#0f172a] border-b border-slate-800 py-4 px-4 flex flex-col gap-4">
+        <a href="/" class="text-slate-300 hover:text-[#FFB000]">Home</a>
+        <a href="/library" class="text-slate-300 hover:text-[#FFB000]">Library</a>
+      </nav>
+    </header>
+
+    <main class="flex-grow max-w-3xl mx-auto w-full px-4 py-6">
+      <slot />
+    </main>
+
+    <!-- Email Signup & Footer -->
+    <footer class="mt-12 bg-slate-900 border-t border-slate-800 py-12">
+      <div class="max-w-3xl mx-auto px-4 text-center">
+        <div class="mb-8 p-6 bg-slate-800/50 rounded-xl border border-slate-700">
+          <h3 class="text-lg font-bold text-white mb-2">Join the MindVault Newsletter</h3>
+          <p class="text-slate-400 text-sm mb-4">Get the latest deep dives and top picks directly to your inbox.</p>
+          <form class="flex flex-col sm:flex-row gap-2 max-w-md mx-auto" onsubmit="event.preventDefault(); alert('Placeholder form submitted');">
+            <input type="email" placeholder="Your email address" class="flex-grow bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#FFB000]" required />
+            <button type="submit" class="bg-[#FFB000] text-slate-900 font-bold px-6 py-2 rounded-lg hover:bg-yellow-500 transition">Subscribe</button>
+          </form>
+        </div>
+
+        <div class="text-sm text-slate-500 flex flex-wrap justify-center gap-4 mb-4">
+          <a href="/privacy" class="hover:text-slate-300">Privacy Policy</a>
+          <a href="/terms" class="hover:text-slate-300">Terms of Service</a>
+          <a href="/affiliate-disclosure" class="hover:text-slate-300">Affiliate Disclosure</a>
+        </div>
+        <p class="text-xs text-slate-600">&copy; {new Date().getFullYear()} MindVault. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script is:inline>
+      const menuBtn = document.getElementById('menu-btn');
+      const mobileNav = document.getElementById('mobile-nav');
+      if(menuBtn && mobileNav) {
+        menuBtn.addEventListener('click', () => {
+          mobileNav.classList.toggle('hidden');
+        });
+      }
+    </script>
+  </body>
+</html>

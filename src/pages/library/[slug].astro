@@ -1,0 +1,69 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('library');
+  return entries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+// SEO JSON-LD
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": entry.data.title,
+  "description": entry.data.description,
+  "author": {
+    "@type": "Person",
+    "name": "MindVault"
+  }
+};
+---
+<BaseLayout title={`${entry.data.title} | MindVault`} description={entry.data.description} type="article">
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <article class="prose prose-invert prose-slate prose-amber max-w-none">
+    <div class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold mb-4 text-white">{entry.data.title}</h1>
+      <div class="flex items-center gap-4 text-sm text-slate-400">
+        <span>5 min read</span>
+        <a href={`https://youtube.com/watch?v=${entry.data.videoId}`} target="_blank" rel="noopener" class="text-[#FFB000] hover:underline flex items-center gap-1">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+          Watch the 60-second version
+        </a>
+      </div>
+    </div>
+
+    <!-- Inject custom styling for markdown content as per spec -->
+    <style is:global>
+      .prose h2 {
+        color: #FFB000;
+        font-size: 1.25rem;
+        margin-top: 2rem;
+        margin-bottom: 0.5rem;
+      }
+      .prose em {
+        color: #ef4444; /* red closing line */
+        font-style: normal;
+        font-weight: bold;
+        display: block;
+        margin-top: 0.5rem;
+      }
+    </style>
+
+    <Content />
+  </article>
+
+  <!-- Sticky Back Button on Mobile -->
+  <div class="fixed bottom-4 left-4 right-4 md:hidden z-40">
+    <a href="/" class="block w-full bg-[#FFB000] text-slate-900 text-center font-bold py-3 rounded-xl shadow-lg border border-yellow-400">
+      &larr; Back to all links
+    </a>
+  </div>
+</BaseLayout>

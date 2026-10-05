@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const libraryEntries = await getCollection('library');
+const categories = [...new Set(libraryEntries.map(e => e.data.category).filter(Boolean))];
+---
+<BaseLayout title="Library | MindVault">
+  <h1 class="text-3xl font-bold mb-6">Deep Dives Library</h1>
+  
+  <div class="mb-8 flex gap-2 flex-wrap" id="filter-container">
+    <button class="filter-btn active bg-[#FFB000] text-slate-900 px-4 py-1 rounded-full text-sm font-bold" data-cat="all">All</button>
+    {categories.map(cat => (
+      <button class="filter-btn bg-slate-800 text-white px-4 py-1 rounded-full text-sm hover:bg-slate-700" data-cat={cat}>{cat}</button>
+    ))}
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2" id="library-grid">
+    {libraryEntries.map((video) => (
+      <div class="lib-card bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden flex flex-col" data-cat={video.data.category}>
+        <div class="p-5 flex-grow">
+          <h3 class="font-bold text-lg text-white mb-2 leading-tight">{video.data.title}</h3>
+          <p class="text-slate-400 text-sm mb-4">{video.data.description}</p>
+        </div>
+        <div class="p-4 border-t border-slate-700/50 bg-slate-800/30 flex gap-2">
+          <a href={`/library/${video.slug}`} class="flex-1 bg-slate-700 hover:bg-slate-600 text-white text-center text-sm font-medium py-2 rounded transition">Read the deep dive</a>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <script>
+    const btns = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.lib-card');
+    
+    btns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const cat = target.getAttribute('data-cat');
+        
+        btns.forEach(b => {
+          b.classList.remove('bg-[#FFB000]', 'text-slate-900', 'font-bold', 'active');
+          b.classList.add('bg-slate-800', 'text-white');
+        });
+        target.classList.remove('bg-slate-800', 'text-white');
+        target.classList.add('bg-[#FFB000]', 'text-slate-900', 'font-bold', 'active');
+        
+        cards.forEach(card => {
+          if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+            (card as HTMLElement).style.display = 'flex';
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</BaseLayout>

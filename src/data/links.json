@@ -1,0 +1,29 @@
+[
+  {
+    "title": "My Favorite Psychology Book",
+    "url": "https://amzn.to/placeholder",
+    "category": "Books",
+    "description": "The book that changed how I think about everything.",
+    "badge": "Top pick",
+    "priority": 1,
+    "isAffiliate": true
+  },
+  {
+    "title": "Mind Mapping Tool",
+    "url": "https://example.com/tool",
+    "category": "Tools",
+    "description": "How I organize my video scripts and thoughts.",
+    "badge": "Daily use",
+    "priority": 2,
+    "isAffiliate": true
+  },
+  {
+    "title": "Join our Facebook Community",
+    "url": "https://www.facebook.com/profile.php?id=61588523408775",
+    "category": "Community",
+    "description": "Engage with other curious minds daily.",
+    "badge": "",
+    "priority": 3,
+    "isAffiliate": false
+  }
+]
