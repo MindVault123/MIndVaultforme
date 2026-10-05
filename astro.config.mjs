@@ -3,6 +3,6 @@ import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://mindvault.netlify.app',
+  site: 'https://euphonious-crumble-27ee23.netlify.app',
   integrations: [tailwind(), sitemap()],
 });
